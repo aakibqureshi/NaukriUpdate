@@ -19,17 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
 
-      - name: Install ChromeDriver
-        run: |
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
+      - name: Setup ChromeDriver
+        uses: SeleniumHQ/setup-chromedriver@v1
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
@@ -47,8 +41,3 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Setup ChromeDriver
-        uses: browser-actions/setup-chromedriver@v1
