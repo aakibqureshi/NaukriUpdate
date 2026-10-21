@@ -47,3 +47,8 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Setup ChromeDriver
+        uses: browser-actions/setup-chromedriver@v1
