@@ -54,6 +54,10 @@ public static WebDriver initilizeBrowser() throws IOException
         	 ChromeOptions op=new ChromeOptions();// 3 lines to skip the session not created exception
         	 op.addArguments("--no-sandbox");
         	 op.addArguments("--disable-dev-shm-usage");
+        	 op.addArguments("--headless");           // Run without UI
+        	 op.addArguments("--no-sandbox");         // Needed in CI
+        	 op.addArguments("--disable-dev-shm-usage"); // Avoid limited /dev/shm
+        	 op.addArguments("--disable-gpu");   
              capabilities.setBrowserName("chrome");
              break;
          case "edge":
