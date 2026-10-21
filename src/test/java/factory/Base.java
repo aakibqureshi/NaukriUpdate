@@ -14,104 +14,92 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-
 public class Base {
 
-	 static WebDriver driver;
-     static Properties p;
-  	     
-public static WebDriver initilizeBrowser() throws IOException
-{
-	p = getProperties();
-    String executionEnv = p.getProperty("execution_env");
-    String browser = p.getProperty("browser").toLowerCase();
-    String os = p.getProperty("os").toLowerCase();
-	
-	if(executionEnv.equalsIgnoreCase("remote"))
-	{
-		DesiredCapabilities capabilities = new DesiredCapabilities();
-		
-		//os
-		 switch (os) {
-         case "windows":
-             capabilities.setPlatform(Platform.WINDOWS);
-             break;
-         case "mac":
-             capabilities.setPlatform(Platform.MAC);
-             break;
-         case "linux":
-             capabilities.setPlatform(Platform.LINUX);
-             break;
-         default:
-             System.out.println("No matching OS");
-             return null;
+    static WebDriver driver;
+    static Properties p;
+
+    public static WebDriver initilizeBrowser() throws IOException {
+        p = getProperties();
+        String executionEnv = p.getProperty("execution_env");
+        String browser = p.getProperty("browser").toLowerCase();
+        String os = p.getProperty("os").toLowerCase();
+
+        if (executionEnv.equalsIgnoreCase("remote")) {
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+
+            // OS
+            switch (os) {
+                case "windows": capabilities.setPlatform(Platform.WINDOWS); break;
+                case "mac": capabilities.setPlatform(Platform.MAC); break;
+                case "linux": capabilities.setPlatform(Platform.LINUX); break;
+                default: System.out.println("No matching OS"); return null;
+            }
+
+            // Browser
+            switch (browser) {
+                case "chrome":
+                    ChromeOptions options = new ChromeOptions();
+                    options.addArguments("--headless=new");
+                    options.addArguments("--no-sandbox");
+                    options.addArguments("--disable-dev-shm-usage");
+                    options.addArguments("--disable-gpu");
+                    options.addArguments("--remote-allow-origins=*");
+                    capabilities.setBrowserName("chrome");
+                    driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
+                    break;
+                case "edge":
+                    capabilities.setBrowserName("MicrosoftEdge");
+                    driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+                    break;
+                case "firefox":
+                    capabilities.setBrowserName("firefox");
+                    driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+                    break;
+                default:
+                    System.out.println("No matching browser");
+                    return null;
+            }
+
+        } else if (executionEnv.equalsIgnoreCase("local")) {
+            switch (browser) {
+                case "chrome":
+                    ChromeOptions options = new ChromeOptions();
+                    options.addArguments("--headless=new");
+                    options.addArguments("--no-sandbox");
+                    options.addArguments("--disable-dev-shm-usage");
+                    options.addArguments("--disable-gpu");
+                    options.addArguments("--remote-allow-origins=*");
+                    driver = new ChromeDriver(options); // Selenium Manager resolves driver
+                    break;
+                case "edge":
+                    driver = new EdgeDriver(); // Selenium Manager resolves driver
+                    break;
+                case "firefox":
+                    driver = new FirefoxDriver(); // Selenium Manager resolves driver
+                    break;
+                default:
+                    System.out.println("No matching browser");
+                    driver = null;
+            }
         }
-		
-		//browser
-		 switch (browser) {
-         case "chrome":
-        	 ChromeOptions options=new ChromeOptions();// 3 lines to skip the session not created exception
-        	 options.addArguments("--headless=new");
-        	 options.addArguments("--no-sandbox");
-        	 options.addArguments("--disable-dev-shm-usage");
-        	 options.addArguments("--disable-gpu");
-        	 options.addArguments("--remote-allow-origins=*");  
-             capabilities.setBrowserName("chrome");
-             break;
-         case "edge":
-        	 //WebDriverManager.edgedriver().setup();
-             capabilities.setBrowserName("MicrosoftEdge");
-             break;
-         case "firefox":
-             capabilities.setBrowserName("firefox");
-             break;
-         default:
-             System.out.println("No matching browser");
-             return null;
-         }
-       
-        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"),capabilities);
-		
-	}
-	else if(executionEnv.equalsIgnoreCase("local"))
-		{
-			switch(browser.toLowerCase()) 
-			{
-			case "chrome":
-				WebDriverManager.chromedriver().setup();
-		        driver=new ChromeDriver();
-		        break;
-		    case "edge":
-		    	WebDriverManager.edgedriver().setup(); //wbmanager installs the compatible version of browser with driver and runs
-		    	driver=new EdgeDriver();
-		        break;
-		    case "firefox":
-		    	WebDriverManager.firefoxdriver().setup();
-		    	driver=new FirefoxDriver();
-		        break;
-		    default:
-		        System.out.println("No matching browser");
-		        driver=null;
-			}
-		}
-	 driver.manage().deleteAllCookies(); 
-	 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-	 //driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(5));
-	 
-	 return driver;
-	 
-}
 
-public static WebDriver getDriver() {
-		return driver;
-	}
+        if (driver != null) {
+            driver.manage().deleteAllCookies();
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        }
 
-public static Properties getProperties() throws IOException
-{		 
-    FileReader file=new FileReader(System.getProperty("user.dir")+"//src/test//resources//config.properties");
-   	p=new Properties();
-	p.load(file);
-	return p;
-}
+        return driver;
+    }
+
+    public static WebDriver getDriver() {
+        return driver;
+    }
+
+    public static Properties getProperties() throws IOException {
+        FileReader file = new FileReader(System.getProperty("user.dir") + "//src/test//resources//config.properties");
+        p = new Properties();
+        p.load(file);
+        return p;
+    }
 }
