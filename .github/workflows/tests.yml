@@ -33,16 +33,13 @@ jobs:
             libgtk-3-0 \
             unzip wget curl
 
-      - name: Install matching ChromeDriver
+      - name: Install ChromeDriver (latest)
         run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1)
-          echo "Detected Chrome major version: $CHROME_VERSION"
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}")
-          echo "Matching ChromeDriver version: $DRIVER_VERSION"
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          echo "Installing ChromeDriver version $DRIVER_VERSION"
           wget -q "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip"
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
-
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
