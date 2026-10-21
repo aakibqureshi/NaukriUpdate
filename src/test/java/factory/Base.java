@@ -106,7 +106,7 @@ public static WebDriver getDriver() {
 
 public static Properties getProperties() throws IOException
 {		 
-    FileReader file=new FileReader(System.getProperty("user.dir")+"\\src\\test\\resources\\config.properties");
+    FileReader file=new FileReader(System.getProperty("user.dir")+"/src/test/resources/config.properties");
    	p=new Properties();
 	p.load(file);
 	return p;
