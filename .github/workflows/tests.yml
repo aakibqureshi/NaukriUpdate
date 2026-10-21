@@ -19,12 +19,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Setup ChromeDriver
-        uses: actions/setup-chromedriver@v1
-
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
