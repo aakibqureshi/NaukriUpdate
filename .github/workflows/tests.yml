@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04   # pin to a stable version
+    runs-on: ubuntu-24.04   # pin to stable runner version
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,6 +18,30 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            google-chrome-stable \
+            libnss3 \
+            libgconf-2-4 \
+            libxi6 \
+            libxcursor1 \
+            libxss1 \
+            libxcomposite1 \
+            libasound2 \
+            libatk1.0-0 \
+            libgtk-3-0 \
+            unzip wget curl
+
+      - name: Install matching ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1)
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
@@ -35,3 +59,10 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
+
+      - name: Upload ChromeDriver log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromedriver-log
+          path: chromedriver.log
