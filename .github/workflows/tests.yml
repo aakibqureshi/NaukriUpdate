@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pin to a stable version
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
         uses: browser-actions/setup-chrome@v1
 
       - name: Setup ChromeDriver
-        uses: SeleniumHQ/setup-chromedriver@v1
+        uses: actions/setup-chromedriver@v1
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
